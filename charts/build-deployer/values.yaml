@@ -1,4 +1,4 @@
-# Base name for all build resources (SA, Pipeline, Tasks, etc.)
+# Base name for all build resources (SA, Pipeline, Tasks, etc)
 name: ""
 
 namespace:
