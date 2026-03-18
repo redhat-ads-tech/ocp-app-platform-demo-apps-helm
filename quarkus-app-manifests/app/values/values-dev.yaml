@@ -1,0 +1,28 @@
+# Values prefixed with "app." because the app-deployer dependency uses alias: app
+app:
+  # Application name — used for Deployment, Service, Route resource names
+  name: my-quarkus-api
+
+  # Runtime namespace with Istio ambient mesh enabled
+  namespace:
+    name: my-quarkus-api-dev
+    istio:
+      enabled: true
+
+  # Container image built by the build-deployer pipeline
+  image:
+    repository: quay-quay.apps.cluster.example.com/my-org/my-quarkus-api
+    tag: latest
+
+  replicas: 1
+
+  # Expose the app via an OpenShift Route (edge TLS by default)
+  route:
+    enabled: true
+
+  # Istio waypoint gateway for the namespace
+  waypoint:
+    enabled: true
+
+  # Links the Deployment to the source repo in the OpenShift console
+  vcsUri: "https://gitlab.apps.cluster.example.com/my-org/my-quarkus-api"

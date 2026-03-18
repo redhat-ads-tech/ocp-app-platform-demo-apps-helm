@@ -1,0 +1,28 @@
+{{ include "app-deployer.name" . }} has been deployed to namespace {{ include "app-deployer.namespace" . }}.
+
+Resources created:
+{{- if .Values.namespace.create }}
+  - Namespace: {{ include "app-deployer.namespace" . }}
+{{- end }}
+  - Deployment: {{ include "app-deployer.name" . }}
+{{- if .Values.service.enabled }}
+  - Service: {{ include "app-deployer.name" . }}
+{{- end }}
+{{- if .Values.route.enabled }}
+  - Route: {{ include "app-deployer.name" . }}
+{{- end }}
+{{- if .Values.serviceAccount.create }}
+  - ServiceAccount: {{ include "app-deployer.name" . }}
+{{- end }}
+{{- if .Values.hpa.enabled }}
+  - HorizontalPodAutoscaler: {{ include "app-deployer.name" . }} ({{ .Values.hpa.minReplicas }}-{{ .Values.hpa.maxReplicas }} replicas)
+{{- end }}
+{{- if .Values.networkPolicy.enabled }}
+  - NetworkPolicy: {{ include "app-deployer.name" . }}
+{{- end }}
+{{- if .Values.serviceMonitor.enabled }}
+  - ServiceMonitor: {{ include "app-deployer.name" . }}
+{{- end }}
+{{- if .Values.waypoint.enabled }}
+  - Gateway (Waypoint): waypoint
+{{- end }}

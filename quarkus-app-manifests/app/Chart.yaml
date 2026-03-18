@@ -1,0 +1,11 @@
+apiVersion: v2
+name: my-quarkus-api-app
+description: Sample Quarkus application deployment using app-deployer
+type: application
+version: 0.1.0
+
+dependencies:
+  - name: app-deployer
+    version: "~1.0"
+    repository: "https://gitlab.apps.cluster.example.com/api/v4/projects/1/packages/helm/stable"
+    alias: app

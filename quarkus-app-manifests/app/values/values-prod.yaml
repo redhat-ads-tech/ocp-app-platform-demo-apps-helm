@@ -1,0 +1,30 @@
+# Production values — pinned image tag, HPA enabled
+app:
+  name: my-quarkus-api
+
+  namespace:
+    name: my-quarkus-api-prod
+    istio:
+      enabled: true
+
+  # Pinned image tag — updated by the promotion pipeline
+  image:
+    repository: quay-quay.apps.cluster.example.com/my-org/my-quarkus-api
+    tag: "1.0"
+
+  # Base replica count (ignored when HPA is enabled)
+  replicas: 2
+
+  route:
+    enabled: true
+
+  waypoint:
+    enabled: true
+
+  # Horizontal Pod Autoscaler — replicas field on Deployment is omitted
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+
+  vcsUri: "https://gitlab.apps.cluster.example.com/my-org/my-quarkus-api"

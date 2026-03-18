@@ -1,0 +1,17 @@
+{{- if .Values.route.enabled }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "app-deployer.name" . }}
+  namespace: {{ include "app-deployer.namespace" . }}
+  labels:
+    {{- include "app-deployer.labels" . | nindent 4 }}
+spec:
+  to:
+    kind: Service
+    name: {{ include "app-deployer.name" . }}
+  port:
+    targetPort: {{ .Values.route.targetPort }}
+  tls:
+    {{- toYaml .Values.route.tls | nindent 4 }}
+{{- end }}

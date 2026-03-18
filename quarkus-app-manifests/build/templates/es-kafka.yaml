@@ -1,0 +1,18 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: kafka-credentials
+  namespace: {{ .Values.build.namespace.name }}
+spec:
+  refreshInterval: 5m
+  secretStoreRef:
+    name: vault-secret-store
+    kind: ClusterSecretStore
+  target:
+    name: kafka-credentials
+    creationPolicy: Owner
+  data:
+    - secretKey: password
+      remoteRef:
+        key: secrets/kafka/user-password
+        property: value

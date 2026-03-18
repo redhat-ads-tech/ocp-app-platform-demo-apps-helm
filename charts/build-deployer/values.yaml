@@ -1,0 +1,99 @@
+# Base name for all build resources (SA, Pipeline, Tasks, etc.)
+name: ""
+
+namespace:
+  name: ""
+  create: true
+  labels: {}
+  annotations: {}
+  istio:
+    enabled: false
+    dataplaneMode: ambient
+    useWaypoint: waypoint
+
+# Source repository to build from
+source:
+  repoUrl: ""
+  branch: ""
+
+# Target image coordinates for the built container
+image:
+  host: ""
+  organization: ""
+  name: ""
+  tag: latest
+
+# Cluster and GitLab hostnames used for routes, ACS endpoints, TPA, etc.
+clusterSubdomain: ""
+gitlabHost: ""
+
+# Developer identity (used for RBAC naming and TPA labels)
+owner: ""
+devEmail: ""
+
+pipeline:
+  tasks:
+    # Maven build step — disable for non-Maven projects
+    mavenBuild:
+      enabled: true
+      image: registry.access.redhat.com/ubi9/openjdk-21:1.20
+    # Buildah build-and-push configuration
+    buildAndPush:
+      dockerfile: Containerfile
+      tlsVerify: "false"
+      storageDriver: vfs
+    # SonarQube scan — disabled by default, enable per-project
+    sonarScan:
+      enabled: false
+      projectKey: ""
+
+triggers:
+  eventTypes:
+    - "Push Hook"
+
+# Persistent Maven repository cache to speed up builds
+buildCache:
+  enabled: true
+  storageSize: 2Gi
+
+# GitLab webhook auto-registration
+webhook:
+  enabled: true
+  sourceProjectPath: ""
+
+# Link quay-push-secret to the operator-managed pipeline SA for Tekton Chains
+linkPushSecret:
+  enabled: true
+
+# ExternalSecrets for build credentials (Vault-backed)
+secrets:
+  # ACS API token for image scan and policy check
+  acs:
+    vaultKey: secrets/acs/api-token
+  # GitLab credentials for git-clone authentication
+  gitlabBasicAuth:
+    vaultKey: secrets/gitlab/token
+  # GitLab webhook secret for EventListener verification
+  gitlabWebhook:
+    vaultKey: ""
+  # Quay push credentials for buildah and Tekton Chains
+  quayPush:
+    vaultKey: secrets/quay/auth
+  # SonarQube credentials — only created when sonarScan is enabled
+  sonarqube:
+    vaultKey: secrets/sonarqube/admin-password
+  # TPA client credentials for SBOM upload
+  tpa:
+    vaultKey: secrets/tpa/cli-client-secret
+
+# Production promotion pipeline — triggered by git tag events
+# Retags the dev image with the git tag and opens a GitLab MR
+# to update the prod values file
+promotion:
+  # GitLab project path for the manifests repo (e.g. myorg/my-app-manifests)
+  manifestsRepoPath: ""
+  # Path to the prod values file within the manifests repo
+  prodValuesFile: app/values/values-prod.yaml
+
+extraLabels: {}
+extraAnnotations: {}

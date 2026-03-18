@@ -1,0 +1,6 @@
+# Helm
+charts/*/charts/
+*.tgz
+
+# macOS
+.DS_Store

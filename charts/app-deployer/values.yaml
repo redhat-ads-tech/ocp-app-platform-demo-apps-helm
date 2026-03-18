@@ -1,0 +1,111 @@
+# Application name — used for all resource names, labels, and selectors
+name: ""
+
+namespace:
+  # Target namespace for the deployment
+  name: ""
+  # Create the namespace resource (disable if managed externally)
+  create: true
+  labels: {}
+  annotations: {}
+  # Istio ambient mesh labels applied to the namespace
+  istio:
+    enabled: false
+    dataplaneMode: ambient
+    useWaypoint: waypoint
+
+# Container image to deploy
+image:
+  repository: ""
+  tag: latest
+  pullPolicy: Always
+
+# Number of pod replicas (ignored when hpa.enabled is true)
+replicas: 1
+
+# Container ports — also used to derive Service ports when service.ports is empty
+ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+
+# Plain environment variables injected into the container
+env: []
+
+# Environment variables sourced from Secrets or ConfigMaps
+envValueFrom: []
+# - name: MY_SECRET
+#   valueFrom:
+#     secretKeyRef:
+#       name: my-secret
+#       key: password
+
+# Container resource requests and limits
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    memory: 1Gi
+
+# Health check probes — defaults target Quarkus health endpoints
+readinessProbe:
+  httpGet:
+    path: /q/health/ready
+    port: 8080
+  initialDelaySeconds: 10
+  periodSeconds: 10
+
+livenessProbe:
+  httpGet:
+    path: /q/health/live
+    port: 8080
+  initialDelaySeconds: 15
+  periodSeconds: 20
+
+# ClusterIP Service — ports auto-derived from container ports when empty
+service:
+  enabled: true
+  type: ClusterIP
+  ports: []
+
+# OpenShift Route with edge TLS termination
+route:
+  enabled: true
+  targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+
+# Dedicated ServiceAccount for the application pods
+serviceAccount:
+  create: false
+
+# Horizontal Pod Autoscaler — when enabled, replicas is omitted from the Deployment
+hpa:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+
+# Kubernetes NetworkPolicy restricting ingress to container ports
+networkPolicy:
+  enabled: false
+
+# Prometheus ServiceMonitor for metrics scraping
+serviceMonitor:
+  enabled: false
+  path: /q/metrics
+  port: http
+
+# Istio waypoint gateway for the namespace
+waypoint:
+  enabled: false
+  waypointFor: service
+
+# app.openshift.io/vcs-uri annotation on the Deployment (links to source in console)
+vcsUri: ""
+
+# Additional labels and annotations merged into all resources
+extraLabels: {}
+extraAnnotations: {}

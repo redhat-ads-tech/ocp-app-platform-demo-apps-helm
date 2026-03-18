@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "maxLength": 63,
+      "description": "Application name used for all resource names and labels"
+    },
+    "namespace": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 63
+        },
+        "create": { "type": "boolean" },
+        "labels": { "type": "object" },
+        "annotations": { "type": "object" },
+        "istio": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "dataplaneMode": {
+              "type": "string",
+              "enum": ["ambient", "sidecar"]
+            },
+            "useWaypoint": { "type": "string" }
+          }
+        }
+      }
+    },
+    "image": {
+      "type": "object",
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "tag": { "type": "string" },
+        "pullPolicy": {
+          "type": "string",
+          "enum": ["Always", "IfNotPresent", "Never"]
+        }
+      }
+    },
+    "replicas": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ports": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["containerPort"],
+        "properties": {
+          "name": { "type": "string" },
+          "containerPort": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "protocol": {
+            "type": "string",
+            "enum": ["TCP", "UDP", "SCTP"]
+          }
+        }
+      }
+    },
+    "env": { "type": "array" },
+    "envValueFrom": { "type": "array" },
+    "resources": { "type": "object" },
+    "readinessProbe": { "type": "object" },
+    "livenessProbe": { "type": "object" },
+    "service": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "type": {
+          "type": "string",
+          "enum": ["ClusterIP", "NodePort", "LoadBalancer"]
+        },
+        "ports": { "type": "array" }
+      }
+    },
+    "route": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "targetPort": { "type": "string" },
+        "tls": { "type": "object" }
+      }
+    },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" }
+      }
+    },
+    "hpa": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "minReplicas": { "type": "integer", "minimum": 1 },
+        "maxReplicas": { "type": "integer", "minimum": 1 },
+        "targetCPUUtilizationPercentage": { "type": "integer", "minimum": 1, "maximum": 100 }
+      }
+    },
+    "networkPolicy": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" }
+      }
+    },
+    "serviceMonitor": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "path": { "type": "string" },
+        "port": { "type": "string" }
+      }
+    },
+    "waypoint": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "waypointFor": {
+          "type": "string",
+          "enum": ["service", "all"]
+        }
+      }
+    },
+    "vcsUri": { "type": "string" },
+    "extraLabels": { "type": "object" },
+    "extraAnnotations": { "type": "object" }
+  }
+}

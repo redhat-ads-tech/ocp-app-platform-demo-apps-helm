@@ -1,0 +1,16 @@
+{{- if .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "app-deployer.name" . }}
+  namespace: {{ include "app-deployer.namespace" . }}
+  labels:
+    {{- include "app-deployer.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "app-deployer.selectorLabels" . | nindent 6 }}
+  endpoints:
+    - port: {{ .Values.serviceMonitor.port }}
+      path: {{ .Values.serviceMonitor.path }}
+{{- end }}

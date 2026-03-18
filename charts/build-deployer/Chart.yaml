@@ -1,0 +1,6 @@
+apiVersion: v2
+name: build-deployer
+description: Generic secured build pipeline deployer for OpenShift
+type: application
+version: 1.0.0
+appVersion: "1.0.0"

@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "maxLength": 63,
+      "description": "Base name for all build resources"
+    },
+    "namespace": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 63 },
+        "create": { "type": "boolean" },
+        "labels": { "type": "object" },
+        "annotations": { "type": "object" },
+        "istio": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "dataplaneMode": { "type": "string", "enum": ["ambient", "sidecar"] },
+            "useWaypoint": { "type": "string" }
+          }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "repoUrl": { "type": "string" },
+        "branch": { "type": "string" }
+      }
+    },
+    "image": {
+      "type": "object",
+      "properties": {
+        "host": { "type": "string" },
+        "organization": { "type": "string" },
+        "name": { "type": "string" },
+        "tag": { "type": "string" }
+      }
+    },
+    "clusterSubdomain": { "type": "string" },
+    "gitlabHost": { "type": "string" },
+    "owner": { "type": "string" },
+    "devEmail": { "type": "string" },
+    "pipeline": {
+      "type": "object",
+      "properties": {
+        "tasks": {
+          "type": "object",
+          "properties": {
+            "mavenBuild": {
+              "type": "object",
+              "properties": {
+                "enabled": { "type": "boolean" },
+                "image": { "type": "string" }
+              }
+            },
+            "buildAndPush": {
+              "type": "object",
+              "properties": {
+                "dockerfile": { "type": "string" },
+                "tlsVerify": { "type": "string" },
+                "storageDriver": { "type": "string" }
+              }
+            },
+            "sonarScan": {
+              "type": "object",
+              "properties": {
+                "enabled": { "type": "boolean" },
+                "projectKey": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "triggers": {
+      "type": "object",
+      "properties": {
+        "eventTypes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "buildCache": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "storageSize": { "type": "string" }
+      }
+    },
+    "webhook": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "sourceProjectPath": { "type": "string" }
+      }
+    },
+    "linkPushSecret": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" }
+      }
+    },
+    "secrets": {
+      "type": "object",
+      "properties": {
+        "acs": {
+          "type": "object",
+          "properties": {
+            "vaultKey": { "type": "string" }
+          }
+        },
+        "gitlabBasicAuth": {
+          "type": "object",
+          "properties": {
+            "vaultKey": { "type": "string" }
+          }
+        },
+        "gitlabWebhook": {
+          "type": "object",
+          "properties": {
+            "vaultKey": { "type": "string" }
+          }
+        },
+        "quayPush": {
+          "type": "object",
+          "properties": {
+            "vaultKey": { "type": "string" }
+          }
+        },
+        "sonarqube": {
+          "type": "object",
+          "properties": {
+            "vaultKey": { "type": "string" }
+          }
+        },
+        "tpa": {
+          "type": "object",
+          "properties": {
+            "vaultKey": { "type": "string" }
+          }
+        }
+      }
+    },
+    "promotion": {
+      "type": "object",
+      "properties": {
+        "manifestsRepoPath": { "type": "string" },
+        "prodValuesFile": { "type": "string" }
+      }
+    },
+    "extraLabels": { "type": "object" },
+    "extraAnnotations": { "type": "object" }
+  }
+}

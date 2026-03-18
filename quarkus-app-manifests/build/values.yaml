@@ -1,0 +1,46 @@
+# Values prefixed with "build." because the build-deployer dependency uses alias: build
+build:
+  # Base name — all pipeline resources (SA, Tasks, etc.) derive from this
+  name: my-quarkus-api-secured
+
+  # Build namespace — separate from the app runtime namespace
+  namespace:
+    name: my-quarkus-api-secured-dev
+    istio:
+      enabled: true
+
+  # Source repository and branch that triggers the pipeline
+  source:
+    repoUrl: https://gitlab.apps.cluster.example.com/myorg/my-quarkus-api.git
+    branch: feat-abc
+
+  # Where the built image is pushed (used by buildah and ACS scan tasks)
+  image:
+    host: quay-quay.apps.cluster.example.com
+    organization: myorg
+    name: my-quarkus-api-secured-dev
+    tag: latest
+
+  # Cluster-level hostnames (used for ACS, TPA, and SSO endpoints)
+  clusterSubdomain: apps.cluster.example.com
+  gitlabHost: gitlab.apps.cluster.example.com
+
+  # Developer identity — used for RBAC naming and TPA SBOM labels
+  owner: developer1
+  devEmail: developer1@example.com
+
+  # GitLab project path for automatic webhook registration
+  webhook:
+    sourceProjectPath: myorg/my-quarkus-api
+
+  # Only the webhook secret Vault path is per-app; all other secrets
+  # use platform-wide defaults from the chart
+  secrets:
+    gitlabWebhook:
+      vaultKey: secrets/my-quarkus-api-secured/webhook-secret
+
+  # Production promotion — tag events retag the dev image and open a
+  # GitLab MR against the manifests repo for approval
+  promotion:
+    manifestsRepoPath: myorg/my-quarkus-api-manifests
+    prodValuesFile: app/values/values-prod.yaml

@@ -1,0 +1,15 @@
+{{- if .Values.service.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "app-deployer.name" . }}
+  namespace: {{ include "app-deployer.namespace" . }}
+  labels:
+    {{- include "app-deployer.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    {{- include "app-deployer.selectorLabels" . | nindent 4 }}
+  ports:
+    {{- include "app-deployer.servicePorts" . | nindent 4 }}
+{{- end }}
