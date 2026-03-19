@@ -16,14 +16,17 @@ publish:
     - helm package charts/app-deployer
     - helm package charts/build-deployer
     - >-
-      curl --request POST
-      --form "chart=@app-deployer-${CI_COMMIT_TAG}.tgz"
+      curl --fail --request POST
+      --form "chart=@$(ls app-deployer-*.tgz)"
       --user "gitlab-ci-token:${CI_JOB_TOKEN}"
       "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/api/stable/charts"
     - >-
-      curl --request POST
-      --form "chart=@build-deployer-${CI_COMMIT_TAG}.tgz"
+      curl --fail --request POST
+      --form "chart=@$(ls build-deployer-*.tgz)"
       --user "gitlab-ci-token:${CI_JOB_TOKEN}"
       "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/helm/api/stable/charts"
   rules:
     - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        - charts/**/*
